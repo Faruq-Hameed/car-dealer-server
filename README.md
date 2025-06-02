@@ -1,0 +1,7 @@
+- register checks for phone and email uniqueness
+- same onboarding for customer and manager but only role is different which is specified during onboarding 
+-  if the category already has a car, only the status will be updated to delete /else delete the category if it has not be used
+- only the manager that added a category or car can perform update and delete action  on them 
+- Only a car can be added at a time bu can be scaled to allow multiple cars at a time
+- Olnly a car can be added at a time bu can be scaled to 
+- already sold car cannot be updated or deleted

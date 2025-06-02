@@ -1,0 +1,1 @@
+export const userPopulateFields = "firstname lastname email phonenumber role"
