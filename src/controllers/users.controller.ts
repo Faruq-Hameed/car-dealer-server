@@ -10,7 +10,8 @@ const getAllUsers = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const users = await UserService.findAllUsers();
+    const users = await UserService.findAllUsers({...req.body});
+
     return res
       .status(StatusCodes.OK)
       .json({ message: "Users fetched successfully", data: { users } });

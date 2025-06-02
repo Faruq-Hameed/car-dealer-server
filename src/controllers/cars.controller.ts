@@ -20,7 +20,7 @@ const createCar = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllCars = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cars = await carService.fetchAllCars();
+    const cars = await carService.fetchAllCars({...req.body});
     res
       .status(StatusCodes.OK)
       .json({ message: "All cars fetched successfully", data: { cars } });

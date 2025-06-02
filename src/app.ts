@@ -22,9 +22,9 @@ app.use(cors());
 app.use(express.json());
 
 
-app.get("/", (req, res) => {
-  res.send("Car Dealership API is running 🚗");
-});
+// app.get("/", (req, res) => {
+//   res.send("Car Dealership API is running 🚗");
+// });
 
 app.use('/api/v1/auths', authRouters)
 app.use('/api/v1/users', userRouters)

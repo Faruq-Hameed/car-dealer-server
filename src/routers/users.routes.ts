@@ -6,7 +6,9 @@ const userRouter = Router();
 
 userRouter.get("/", userController.getAllUsers);
 
+
 userRouter.use(validateObjectId)
+userRouter.get("/", userController.getAllUsers);
 
 userRouter.get("/:id", userController.getUserById);
 

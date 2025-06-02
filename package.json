@@ -2,12 +2,14 @@
   "name": "car-dealer-server",
   "version": "1.0.0",
   "description": "This a server side code for the car dealing app. We have two users; Managers and Dealers.",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",

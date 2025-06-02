@@ -5,7 +5,8 @@ import Authenticator from "../middlewares/Authenticator";
 const authRouters = Router();
 
 authRouters.post("", authController.createUserAccount);
-authRouters.post("/login", authController.userLogin);
+authRouters.post("/login",authController.userLogin)
+
 
 authRouters.use(Authenticator())
 authRouters.put("/password", authController.changePassword);

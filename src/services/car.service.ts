@@ -7,6 +7,7 @@ import {
 import { ICar, Car, User, Category } from "../models";
 import { UserRoles } from "../utils/types/enums";
 import mongoose, { Types } from "mongoose";
+import { PaginationQuery, PaginationResponse } from "../utils/types/common";
 
 class CarService {
   /** service to add a new car by manager */
@@ -61,12 +62,31 @@ class CarService {
   /**service to fetch all categories */
 
   /**service to fetch all cars */
-  async fetchAllCars(): Promise<ICar[]> {
+  async fetchAllCars( data?: PaginationQuery
+  ): Promise<PaginationResponse<ICar>> {
+    const {
+      page = 1,
+      limit = 10,
+      sort = "createdAt",
+      skip = 10,
+      query,
+    } = data ?? {};
     const cars = await Car.find().populate([
       { path: "addedBy", select: "id firstname lastname" },
       { path: "category", select: "id name" },
-    ]);
-    return cars;
+    ])
+          .sort(sort)
+          .skip(skip)
+          .limit(limit);
+        const total = await Car.countDocuments({ ...query });
+        const totalPages = Math.ceil(total / limit);
+        return {
+          total,
+          currentPage: page,
+          limit,
+          totalPages,
+          docs: cars,
+        };
   }
 
   /** service to fetch a car by id */

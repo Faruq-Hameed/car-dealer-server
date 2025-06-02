@@ -35,7 +35,7 @@ const getAllCategory = async (
   next: NextFunction
 ) => {
   try {
-    const categories = await CategoryService.fetchAllCategories();
+    const categories = await CategoryService.fetchAllCategories({...req.body});
     res.status(StatusCodes.OK).json({
       message: "All categories fetched successfully",
       data: { categories },

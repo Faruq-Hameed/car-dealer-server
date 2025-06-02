@@ -1,12 +1,27 @@
 import { NotFoundException } from "../exceptions/NotFoundException";
 import { Car, Category, IUser, User } from "../models";
+import { PaginationQuery, PaginationResponse } from "../utils/types/common";
 import { UserStatusEnum } from "../utils/types/enums";
 
 class UserService {
   /**service to find all users */
-  async findAllUsers(query?: Record<string, any>): Promise<IUser[]> {
-    const users = await User.find();
-    return users;
+  async findAllUsers(
+   data?: PaginationQuery
+  ): Promise<PaginationResponse<IUser>> {
+    const { page = 1, limit =10, sort = "createdAt", skip = 10, query } = data ?? {};
+    const users = await User.find({ ...query }, "-password")
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+    const total = await User.countDocuments({ ...query });
+    const totalPages = Math.ceil(total / limit);
+    return {
+      total,
+      currentPage: page,
+      limit,
+      totalPages,
+      docs: users,
+    };
   }
   async findUserById(userId: string): Promise<IUser> {
     const user = await User.findById(userId);
@@ -23,7 +38,7 @@ class UserService {
       {
         new: true,
       }
-    );
+    ).lean()
     if (!updatedUser) {
       throw new NotFoundException("User not found");
     }
@@ -35,7 +50,7 @@ class UserService {
       Car.findOne({ $or: [{ addedBy: userId }, { soldTo: userId }] }),
       Category.findOne({ addedBy: userId }),
     ]);
-    
+
     let message = "User deleted successfully";
     let user: IUser | null;
     if (car || category) {

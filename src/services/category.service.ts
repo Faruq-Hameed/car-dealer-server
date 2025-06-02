@@ -7,6 +7,7 @@ import {
 import { Car, Category, ICategory, IUser, User } from "../models";
 import { userPopulateFields } from "../utils/common";
 import { CategoryStatus, UserRoles } from "../utils/types/enums";
+import { PaginationQuery, PaginationResponse } from "../utils/types/common";
 
 class CategoryService {
   async addCategory(
@@ -21,11 +22,31 @@ class CategoryService {
     return category;
   }
 
-  async fetchAllCategories(): Promise<ICategory[]> {
-    const categories = await Category.find().populate([
-      { path: "addedBy", select: "id firstname lastname" },
-    ]);
-    return categories;
+  async fetchAllCategories(
+    data?: PaginationQuery
+  ): Promise<PaginationResponse<ICategory>> {
+    const {
+      page = 1,
+      limit = 10,
+      sort = "createdAt",
+      skip = 10,
+      query,
+    } = data ?? {};
+
+    const categories = await Category.find({ ...query })
+      .populate([{ path: "addedBy", select: "id firstname lastname" }])
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+    const total = await Category.countDocuments({ ...query });
+    const totalPages = Math.ceil(total / limit);
+    return {
+      total,
+      currentPage: page,
+      limit,
+      totalPages,
+      docs: categories,
+    };
   }
 
   async fetchCategoryById(categoryId: string): Promise<ICategory> {
@@ -48,7 +69,6 @@ class CategoryService {
     if (!category) {
       throw new NotFoundException("category not found to update");
     }
-    console.log(category.addedBy);
     if (category.addedBy.toString() !== managerId) {
       throw new ForbiddenException(
         "You are not allowed to update the category"

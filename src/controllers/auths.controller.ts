@@ -18,19 +18,19 @@ const createUserAccount = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { error } = createUserValidator(req.body);
+    const { error } = createUserValidator({...req.body});
     if (error) {
       throw new BadRequestException(error.details[0].message);
     }
     const { password, ...user } = await AuthService.registerAccount(req.body);
-    const token = generateAuthToken(
+    const accessToken = generateAuthToken(
       user.id as string,
       user.role as string,
       user.lastTokenGeneration as Date
     );
     return res
       .status(StatusCodes.CREATED)
-      .json({ message: "User added successfully", data: { token, user } });
+      .json({ message: "User added successfully", data: { accessToken, user } });
   } catch (error) {
     next(error);
   }
@@ -43,19 +43,19 @@ const userLogin = async (
 ): Promise<any> => {
   try {
     const { value, error } = loginValidator(req.body);
-    console.log({value, error})
+    console.log({body: req.body, value, error})
     if (error) {
       throw new BadRequestException(error.details[0].message);
     }
     const { password, ...user } = await AuthService.login(value as ILogin);
-    const token = generateAuthToken(
+    const accessToken = generateAuthToken(
       user._id as string,
       user.role as string,
       user.lastTokenGeneration as Date
     );
     return res
       .status(StatusCodes.OK)
-      .json({ message: "User login successfully", data: { token, user } });
+      .json({ message: "User login successfully", data: { accessToken, user } });
   } catch (error) {
     next(error);
   }

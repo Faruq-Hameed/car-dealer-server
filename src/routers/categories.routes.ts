@@ -9,10 +9,10 @@ categoryRouter.use(Authenticator())
 categoryRouter.post("/", categoryController.createCategory);
 
 categoryRouter.get("/", categoryController.getAllCategory);
+categoryRouter.get("/:id", categoryController.getCategoryById);
+
 
 categoryRouter.use(validateObjectId)
-
-categoryRouter.get("/:id", categoryController.getCategoryById);
 
 categoryRouter.put("/:id", categoryController.updateCategory);
 
