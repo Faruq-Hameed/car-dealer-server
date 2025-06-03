@@ -19,7 +19,11 @@ const Authenticator = (role?: UserRoles) => {
       const payload = verifyAuthToken(token); // implement this to verify and decode JWT
       // Role check
       if (role && role !== payload.role) {
-        return next(new UnauthorizedException());
+        return next(
+          new UnauthorizedException(
+            `Only ${role} are allowed to make this request `
+          )
+        );
       }
       const user = await User.findById(payload.id, 'lastTokenGeneration status')
       // console.log({payload})

@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import CategoryService from "../services/category.service";
 import { ICategory } from "../models";
-import { createCategoryValidator, updateCategoryValidator } from "../utils/validators/category.validator";
+import {
+  createCategoryValidator,
+  updateCategoryValidator,
+} from "../utils/validators/category.validator";
 import { BadRequestException } from "../exceptions";
 import { PaginationQuery } from "../utils/types/common";
 
@@ -36,7 +39,7 @@ const getAllCategory = async (
   next: NextFunction
 ) => {
   try {
-    const categories = await CategoryService.fetchAllCategories(req.query as unknown as  PaginationQuery);
+    const categories = await CategoryService.fetchAllCategories(req.query);
     res.status(StatusCodes.OK).json({
       message: "All categories fetched successfully",
       data: { categories },
@@ -68,7 +71,7 @@ const updateCategory = async (
 ) => {
   try {
     const managerId = res.locals.userId;
-        const { error } = updateCategoryValidator(req.body);
+    const { error } = updateCategoryValidator(req.body);
     if (error) {
       throw new BadRequestException(error.details[0].message);
     }
