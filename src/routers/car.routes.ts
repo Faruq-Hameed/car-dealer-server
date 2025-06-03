@@ -8,7 +8,7 @@ export const carRouter = Router();
 carRouter.get("/", carController.getAllCars);
 carRouter.get("/:id", carController.getCarById);
 
-carRouter.put("/:id", [Authenticator(UserRoles.CUSTOMER), carController.purchaseCarByCustomer]);
+carRouter.put("/buy/:id", [Authenticator(UserRoles.CUSTOMER), carController.purchaseCarByCustomer]);
 
 carRouter.get("/me", [Authenticator(), carController.getAUserCars]);  //get my cars
 
