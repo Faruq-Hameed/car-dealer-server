@@ -2,9 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import carService from "../services/car.service";
 import { ICar } from "../models";
+import { BadRequestException } from "../exceptions";
+import { createCarValidator, updateCarValidator } from "../utils/validators/car.validation";
 
 const createCar = async (req: Request, res: Response, next: NextFunction) => {
   try {
+       const { error } = createCarValidator(req.body);
+        if (error) {
+          throw new BadRequestException(error.details[0].message);
+        }
     const managerId = res.locals.userId;
     const car = await carService.addNewCar(
       req.body as Partial<ICar>,
@@ -41,6 +47,10 @@ const getCarById = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updateCar = async (req: Request, res: Response, next: NextFunction) => {
+         const { error } = updateCarValidator(req.body);
+        if (error) {
+          throw new BadRequestException(error.details[0].message);
+        }
   try {
     const managerId = res.locals.userId;
 

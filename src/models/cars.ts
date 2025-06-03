@@ -21,12 +21,10 @@ interface ICar {
 // Mongoose schema for the Car
 const CarSchema: Schema<ICar> = new Schema<ICar>(
   {
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "categories",
-    },
     maker: {
+      type: String,
+      required: true,
+    }, model: {
       type: String,
       required: true,
     },
@@ -54,6 +52,11 @@ const CarSchema: Schema<ICar> = new Schema<ICar>(
       type: Boolean,
       required: true,
       default: true,
+    },
+        category: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "categories",
     },
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,

@@ -18,7 +18,7 @@ class CarService {
     const categoryId = data.category;
     const [category, manager] = await Promise.all([
       Category.findById(categoryId, ""),
-      User.findOne({ id: managerId, role: UserRoles.MANAGER }, "role"),
+      User.findOne({ _id: managerId, role: UserRoles.MANAGER }, "role"),
     ]);
     if (!category) {
       throw new BadRequestException("Invalid category provided");
@@ -28,31 +28,30 @@ class CarService {
     }
 
     // start a transaction the process has to be ACID compliant
-    const session = await mongoose.connection.startSession();
+    const session = await mongoose.startSession();
+    console.log({ ...data, addedBy: managerId });
     session.startTransaction();
     try {
-      const [newCar] = await Promise.all([
-        Car.create({ ...data, addedBy: managerId }, { session }),
-        Category.findByIdAndUpdate(
-          categoryId,
-          { $inc: { totalCars: 1 } },
-          { new: true, session }
-        ).select("name totalCars"),
-        User.findByIdAndUpdate(
-          //already confirmed up to be a manager so no need to check role
-          managerId,
-          { $inc: { totalCarsAdded: 1 } },
-          { new: true, session }
-        ),
-      ]);
+      //Should have ran the opration below parrallell but the mongoose session fails if done that way
+      const [createdCar] = await Car.create([{ ...data, addedBy: managerId }], {
+        session,
+      });
+
+      await Category.findByIdAndUpdate(
+        categoryId,
+        { $inc: { totalCars: 1 } },
+        { new: true, session }
+      );
+
+      await User.findByIdAndUpdate(
+        managerId,
+        { $inc: { totalCarsAdded: 1 } },
+        { new: true, session }
+      );
+
       await session.commitTransaction();
 
-      // Populate the returned car with updated category and manager info
-      const populatedCar = await Car.findById(newCar[0].id).populate([
-        { path: "addedBy", select: "id firstname lastname" },
-        { path: "category", select: "id name totalCars" },
-      ]);
-      return populatedCar as ICar;
+      return createdCar;
     } catch (error) {
       await session.abortTransaction();
       throw error;
@@ -83,12 +82,21 @@ class CarService {
 
     const dbQuery = {
       ...others,
-      ...{ maker: { $regex: maker, $options: "i" } },
-      ...{ model: { $regex: model, $options: "i" } },
-      price: {
-        ...(startPrice && { $gte: parseInt(startPrice as string) }),
-        ...(endPrice && { $lte: parseInt(endPrice as string) }),
-      },
+      // Match 'maker' using case-insensitive partial match
+  ...(maker && { maker: { $regex: maker, $options: "i" } }),
+
+  // Match 'model' similarly
+  ...(model && { model: { $regex: model, $options: "i" } }),
+
+       // Add price filter if either startPrice or endPrice is provided
+  ...(startPrice || endPrice
+    ? {
+        price: {
+          ...(startPrice && { $gte: parseInt(startPrice as string) }),
+          ...(endPrice && { $lte: parseInt(endPrice as string) }),
+        },
+      }
+    : {}),
       createdAt: { $gte: dateRange.startDate, $lte: dateRange.endDate },
     };
 
@@ -186,6 +194,7 @@ class CarService {
       await session.endSession();
     }
   }
+
 }
 
 export default new CarService();

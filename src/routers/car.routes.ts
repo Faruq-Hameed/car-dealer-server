@@ -16,6 +16,6 @@ carRouter.use(validateObjectId)
 
 carRouter.put("/:id", carController.getCarById);
 
-carRouter.delete("/:id", carController.getCarById);
+carRouter.delete("/:id", carController.deleteCar);
 
 
