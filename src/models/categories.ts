@@ -7,7 +7,7 @@ interface ICategory extends Document {
   name: string;
   description: string;
   addedBy: Types.ObjectId;
-  status: CategoryStatus;
+  status: CategoryStatus; //i.e available or deleted
   totalCars: number; //total car that belong to this category
   createdAt: Date;
   updatedAt: Date;

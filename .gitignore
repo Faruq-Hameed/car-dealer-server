@@ -3,3 +3,4 @@ dist
 coverage
 build
 package-lock.json
+.env

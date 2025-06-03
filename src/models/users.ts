@@ -3,19 +3,18 @@ import { UserRoles, UserStatusEnum } from "../utils/types/enums";
 
 /** interface for the User document */
 interface IUser extends Document {
-  id: string;
   email: string;
   phonenumber: string;
   password: string;
   firstname: string;
   lastname: string;
   city: string;
-  status: UserStatusEnum;
+  status: UserStatusEnum; //active or deleted
   role: UserRoles;
   lastTokenGeneration: Date;
   totalCarsPurchased?: number; //for customer
-  totalCarsAdded?: number; //for User i.e seller
-  totalCarsSold?: number; //for User i.e seller
+  totalCarsAdded?: number; //for manager i.e seller
+  totalCarsSold?: number; //for manager i.e seller
   createdAt: Date;
   updatedAt: Date;
 }

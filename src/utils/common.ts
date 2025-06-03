@@ -2,6 +2,7 @@ import { Document, Model } from "mongoose";
 
 import { SortOrder } from "mongoose";
 
+
 export interface PaginationQuery {
   page?: number;
   limit?: number;
@@ -25,7 +26,7 @@ export async function paginate<T extends Document>(
   const {
     page = 1,
     limit = 10,
-    sort = "createdAt",
+    sort = "createdAt", //default sort by createdAt
     query = {},
     populate,
   } = options;

@@ -4,85 +4,74 @@ import mongoose, { Schema, type Document, Types } from "mongoose";
 interface ICar {
   category: Types.ObjectId;
   description?: string;
-  addedBy: Types.ObjectId;
-  maker: string;
-  brand: string;
-  model: string;
+  maker: string; //e.g toyota
+  brand: string; //new, used
+  model: string; //e.g corolla
   year: number;
   price: number;
-  mileage: number;
-  color: string;
-  condition: string; //e.g new
-  fuelType: string;
   images: Array<string>;
   available: boolean;
-  soldTo?: string;
+  addedBy: Types.ObjectId;
+  soldTo?: Types.ObjectId;
   soldAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
 // Mongoose schema for the Car
-const CarSchema: Schema<ICar> = new Schema<ICar>({
+const CarSchema: Schema<ICar> = new Schema<ICar>(
+  {
     category: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "categories",
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "categories",
+    },
+    maker: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    brand: {
+      type: String,
+      enum: ["new", "used"],
+      required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    images: {
+      type: [String],
+      default: [],
+    },
+    available: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    addedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "users",
+    },
+
+    soldTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
+    soldAt: {
+      type: Date,
+      default: null,
+    },
   },
-  addedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "users",
-  },
-  available: {
-    type: Boolean,
-    required: true,
-    default: true,
-  },
-  soldTo: {
-    type: String,
-    default: null,
-  },
-  soldAt: {
-    type: Date,
-    default: null,
-  },
-  maker: {
-    type: String,
-    required: true,
-  },
-  brand: {
-    type: String,
-    required: true,
-  },
-  year: {
-    type: Number,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  mileage: {
-    type: Number,
-    required: true,
-  },
-  color: {
-    type: String,
-    required: true,
-  },
-  condition: {
-    type: String,
-    required: true,
-  },
-    fuelType: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-  },
-});
+  { timestamps: true }
+);
 
 const Car = mongoose.model<ICar>("cars", CarSchema);
 

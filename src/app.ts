@@ -19,7 +19,9 @@ const PORT = appConfig.port || 5000;
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(cors());
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 // app.get("/", (req, res) => {
