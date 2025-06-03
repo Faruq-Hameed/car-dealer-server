@@ -6,17 +6,17 @@ import { UserStatusEnum } from "../utils/types/enums";
 class UserService {
   /**service to find all users */
   async findAllUsers(
-   data?: PaginationQuery
+   data: Record<string, any> = {}
   ): Promise<PaginationResponse<IUser>> {
     const { page = 1, limit =10, sort = "createdAt", skip = 10, query } = data ?? {};
     const users = await User.find({ ...query }, "-password")
       .sort(sort)
       .skip(skip)
       .limit(limit);
-    const total = await User.countDocuments({ ...query });
-    const totalPages = Math.ceil(total / limit);
+    const totalDocs = await User.countDocuments({ ...query });
+    const totalPages = Math.ceil(totalDocs / limit);
     return {
-      total,
+      totalDocs,
       currentPage: page,
       limit,
       totalPages,

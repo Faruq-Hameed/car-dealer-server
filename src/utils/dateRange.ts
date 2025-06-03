@@ -11,7 +11,6 @@ export const dateRangeValidator = (dateData: {
   endDate?: string;
 }): DateRange => {
   const { startDate, endDate } = dateData;
-
   // check if the query parameters are valid date types
   if (
     (startDate && !isValidDate(startDate)) ??

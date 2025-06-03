@@ -10,7 +10,7 @@ const getAllUsers = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const users = await UserService.findAllUsers({...req.body});
+    const users = await UserService.findAllUsers(req.query);
 
     return res
       .status(StatusCodes.OK)

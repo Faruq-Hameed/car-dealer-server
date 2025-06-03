@@ -8,12 +8,14 @@ import { ICar, Car, User, Category } from "../models";
 import { UserRoles } from "../utils/types/enums";
 import mongoose, { Types } from "mongoose";
 import { PaginationQuery, PaginationResponse } from "../utils/types/common";
+import { paginate, PaginateOptions } from "../utils/common";
+import { dateRangeValidator } from "../utils/dateRange";
 
 class CarService {
   /** service to add a new car by manager */
   async addNewCar(data: Partial<ICar>, managerId: string): Promise<ICar> {
     //check if both category and manager are valid(manager also check for role)
-    const categoryId = data.category as Types.ObjectId;
+    const categoryId = data.category;
     const [category, manager] = await Promise.all([
       Category.findById(categoryId, ""),
       User.findOne({ id: managerId, role: UserRoles.MANAGER }, "role"),
@@ -59,34 +61,54 @@ class CarService {
     }
   }
 
-  /**service to fetch all categories */
-
   /**service to fetch all cars */
-  async fetchAllCars( data?: PaginationQuery
+  async fetchAllCars(
+    requestQuery?: Record<string, any>
   ): Promise<PaginationResponse<ICar>> {
     const {
-      page = 1,
-      limit = 10,
-      sort = "createdAt",
-      skip = 10,
-      query,
-    } = data ?? {};
-    const cars = await Car.find().populate([
-      { path: "addedBy", select: "id firstname lastname" },
-      { path: "category", select: "id name" },
-    ])
-          .sort(sort)
-          .skip(skip)
-          .limit(limit);
-        const total = await Car.countDocuments({ ...query });
-        const totalPages = Math.ceil(total / limit);
-        return {
-          total,
-          currentPage: page,
-          limit,
-          totalPages,
-          docs: cars,
-        };
+      page,
+      limit,
+      sort,
+      category,
+      maker,
+      model,
+      startPrice,
+      endPrice,
+      startDate,
+      endDate,
+      ...others /// allows for flexible filtering on extra fields
+    } = requestQuery || {};
+    const skip = (page as number) && (limit as number) ? (page - 1) * limit : 0;
+    const dateRange = dateRangeValidator({ startDate, endDate }); //normalized the date range
+
+    const dbQuery = {
+      ...others,
+      ...{ maker: { $regex: maker, $options: "i" } },
+      ...{ model: { $regex: model, $options: "i" } },
+      price: {
+        ...(startPrice && { $gte: parseInt(startPrice as string) }),
+        ...(endPrice && { $lte: parseInt(endPrice as string) }),
+      },
+      createdAt: { $gte: dateRange.startDate, $lte: dateRange.endDate },
+    };
+
+    const cars = await Car.find(dbQuery)
+      .populate([
+        { path: "addedBy", select: "id firstname lastname" },
+        { path: "category", select: "id name" },
+      ])
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+    const totalDocs = await Car.countDocuments(dbQuery);
+    const totalPages = Math.ceil(totalDocs / limit);
+    return {
+      totalDocs,
+      currentPage: page,
+      limit,
+      totalPages,
+      docs: cars || [],
+    };
   }
 
   /** service to fetch a car by id */

@@ -24,10 +24,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-// app.get("/", (req, res) => {
-//   res.send("Car Dealership API is running 🚗");
-// });
+app.get("/", (req, res) => {
+  res.send("Car Dealership API is running 🚗");
+});
 
+
+//This is added to handle error in case of no body is passed in the request. I was unable to find out why it was not working
+//I have added this middleware to handle error in case of no body is passed in the request
+app.use("/", (req, res, next) => {
+  if(!req.body) req.body = {}
+  next()
+});
 app.use('/api/v1/auths', authRouters)
 app.use('/api/v1/users', userRouters)
 app.use('/api/v1/categories', categoryRouter)

@@ -16,10 +16,11 @@ export interface PaginationQuery {
   limit: number;
   skip: number;
   sort: string;
+  populate?:any
 }
 
 export interface PaginationResponse<T> {
-  total: number;
+  totalDocs: number;
   currentPage: number;
   limit: number;
   totalPages: number;

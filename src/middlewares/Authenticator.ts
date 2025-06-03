@@ -22,7 +22,7 @@ const Authenticator = (role?: UserRoles) => {
         return next(new UnauthorizedException());
       }
       const user = await User.findById(payload.id, 'lastTokenGeneration status')
-      console.log({payload})
+      // console.log({payload})
       if(!user || user.status === UserStatusEnum.DELETED ){
         throw new NotFoundException('User account is no longer valid ')
       }

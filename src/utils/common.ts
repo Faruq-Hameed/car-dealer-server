@@ -2,17 +2,19 @@ import { Document, Model } from "mongoose";
 
 import { SortOrder } from "mongoose";
 
-
-export interface PaginationQuery {
+export interface PaginateOptions {
   page?: number;
   limit?: number;
-  sort?: string | { [key: string]: SortOrder | { $meta: any } } | [string, SortOrder][] | null | undefined;
-  query?: any;
+  sort?:string
+    // | { [key: string]: SortOrder | { $meta: any } }
+    // | [string, SortOrder][]
+    // | null
+    // | undefined;
   populate?: any;
 }
 
 export interface PaginationResponse<T> {
-  total: number;
+  totalDocs: number;
   currentPage: number;
   limit: number;
   totalPages: number;
@@ -21,13 +23,14 @@ export interface PaginationResponse<T> {
 
 export async function paginate<T extends Document>(
   model: Model<T>,
-  options: PaginationQuery = {}
+  query: Record<string, any> = {},
+  options: PaginateOptions = {}
 ): Promise<PaginationResponse<T>> {
+  console.log("paginate", query, options);
   const {
     page = 1,
     limit = 10,
     sort = "createdAt", //default sort by createdAt
-    query = {},
     populate,
   } = options;
 
@@ -39,15 +42,15 @@ export async function paginate<T extends Document>(
     docsQuery = docsQuery.populate(populate);
   }
 
-  const [docs, total] = await Promise.all([
+  const [docs, totalDocs] = await Promise.all([
     docsQuery,
     model.countDocuments(query),
   ]);
 
-  const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.ceil(totalDocs / limit);
 
   return {
-    total,
+    totalDocs,
     currentPage: page,
     limit,
     totalPages,
@@ -55,4 +58,4 @@ export async function paginate<T extends Document>(
   };
 }
 
-export const userPopulateFields = "firstname lastname email phonenumber role"
+export const userPopulateFields = "firstname lastname email phonenumber role";

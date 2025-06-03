@@ -4,6 +4,7 @@ import CategoryService from "../services/category.service";
 import { ICategory } from "../models";
 import { createCategoryValidator, updateCategoryValidator } from "../utils/validators/category.validator";
 import { BadRequestException } from "../exceptions";
+import { PaginationQuery } from "../utils/types/common";
 
 const createCategory = async (
   req: Request,
@@ -35,7 +36,7 @@ const getAllCategory = async (
   next: NextFunction
 ) => {
   try {
-    const categories = await CategoryService.fetchAllCategories({...req.body});
+    const categories = await CategoryService.fetchAllCategories(req.query as unknown as  PaginationQuery);
     res.status(StatusCodes.OK).json({
       message: "All categories fetched successfully",
       data: { categories },
