@@ -52,6 +52,9 @@ Supports user authentication, car and category management, robust role-based acc
 
 ---
 
+# Postman url: 
+[Postman documentation](https://www.postman.com/myecurrencyng/workspace/tasks/collection/24456065-bda02dc4-6dc8-458b-bf2b-c7fabfdc1856?action=share&creator=24456065)
+
 ## Getting Started
 
 ### Prerequisites
@@ -73,7 +76,7 @@ Create a `.env` file in the root directory and set the following:
 
 ```
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/car-dealer
+MONGODB_URI=MongoDB url
 JWT_SECRET=your_jwt_secret
 ```
 
