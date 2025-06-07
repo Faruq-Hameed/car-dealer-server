@@ -58,7 +58,10 @@ mongoose
 // error handler
 app.use(ErrorHandler);
 
-/** Invalid api route handler*/
-// app.use('*', (req: Request, res: Response) => {
-//   return res.status(404).send({ message: 'Page not found!', data: null });
-// });
+//Handle all other routes that are not defined in the routes above Invalid api route
+app.use((req: Request, res: Response) => {
+   res.status(404).send({
+    message: '🚨 Page not found! 🚨',
+    data: null,
+  });
+});

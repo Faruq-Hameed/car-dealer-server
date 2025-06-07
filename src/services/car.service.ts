@@ -161,7 +161,7 @@ class CarService {
   /** service to delete a car by manager that added it*/
   async deleteCar(carId: string, managerId: string): Promise<void> {
     const [car, manager] = await Promise.all([
-      Car.findById(carId).select("addedBy available"),
+      Car.findById(carId).select("addedBy available category"),
       User.findById(managerId).select("totalCarsAdded"),
     ]);
     if (!car || !manager) {

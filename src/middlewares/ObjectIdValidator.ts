@@ -3,12 +3,13 @@ import mongoose from "mongoose";
 import { BadRequestException } from "../exceptions";
 
 const validateObjectId = (req: Request, _res: Response, next: NextFunction) => {
-  const { id } = req.params;
+  console.log("req.params:", req.params);
+  const id = req.params.id;
   if (!id) {
-    return next(new BadRequestException("Missing id parameter"));
+    return next();
   }
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return next(new BadRequestException("Invalid id format"));
+    throw new BadRequestException("Invalid id format");
   }
   next();
 };

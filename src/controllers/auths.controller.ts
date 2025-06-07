@@ -24,7 +24,7 @@ const createUserAccount = async (
     }
     const { password, ...user } = await AuthService.registerAccount(req.body);
     const accessToken = generateAuthToken(
-      user.id as string,
+      user._id as string,
       user.role as string,
       user.lastTokenGeneration as Date
     );

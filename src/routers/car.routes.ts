@@ -5,6 +5,8 @@ import validateObjectId from "../middlewares/ObjectIdValidator";
 import { UserRoles } from "../utils/types/enums";
 export const carRouter = Router();
 
+carRouter.use(validateObjectId)
+
 carRouter.get("/", carController.getAllCars);
 carRouter.get("/:id", carController.getCarById);
 
@@ -15,9 +17,8 @@ carRouter.get("/me", [Authenticator(), carController.getAUserCars]);  //get my c
 carRouter.use(Authenticator(UserRoles.MANAGER))
 carRouter.post("/", carController.createCar);
 
-carRouter.use(validateObjectId)
 
-carRouter.put("/:id", carController.getCarById);
+carRouter.put("/:id", carController.updateCar);
 
 carRouter.delete("/:id", carController.deleteCar);
 

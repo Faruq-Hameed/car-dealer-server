@@ -97,7 +97,7 @@ npm run dev
 
 | Method | Endpoint                   | Description                        |
 |--------|----------------------------|------------------------------------|
-| POST   | `/api/v1/auths/register`   | Register user (customer/manager)   |
+| POST   | `/api/v1/auths/`   | Register user (customer/manager)   |
 | POST   | `/api/v1/auths/login`      | Login                              |
 
 ### Users
@@ -105,7 +105,7 @@ npm run dev
 | Method | Endpoint                   | Description                        |
 |--------|----------------------------|------------------------------------|
 | GET    | `/api/v1/users`            | List users (paginated, manager)    |
-| PATCH  | `/api/v1/users/:id`        | Update user                        |
+| PUT    | `/api/v1/users/:id`        | Update user                        |
 | DELETE | `/api/v1/users/:id`        | Delete user                        |
 
 ### Categories
@@ -114,7 +114,7 @@ npm run dev
 |--------|--------------------------------|------------------------------------|
 | POST   | `/api/v1/categories`           | Add category (manager only)        |
 | GET    | `/api/v1/categories`           | List categories (paginated)        |
-| PATCH  | `/api/v1/categories/:id`       | Update category (manager only)     |
+| PUT    | `/api/v1/categories/:id`       | Update category (manager only)     |
 | DELETE | `/api/v1/categories/:id`       | Delete category (manager only)     |
 
 ### Cars
@@ -123,7 +123,7 @@ npm run dev
 |--------|--------------------------------|-----------------------------------------------------|
 | POST   | `/api/v1/cars`                 | Add car (manager only)                              |
 | GET    | `/api/v1/cars`                 | List cars (paginated, filterable)                   |
-| PATCH  | `/api/v1/cars/:id`             | Update car (manager only, not if sold)              |
+| PUT    | `/api/v1/cars/:id`             | Update car (manager only, not if sold)              |
 | DELETE | `/api/v1/cars/:id`             | Delete car (manager only, not if sold)              |
 | POST   | `/api/v1/cars/:id/buy`         | Buy a car (customer only)                           |
 | GET    | `/api/v1/cars/user`            | Fetch cars for current user:<br>- Customer: cars bought (sorted by `soldAt`)<br>- Manager: cars added (sorted by `createdAt`) |
