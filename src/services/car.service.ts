@@ -65,8 +65,8 @@ class CarService {
     requestQuery?: Record<string, any>
   ): Promise<PaginationResponse<ICar>> {
     const {
-      page,
-      limit,
+      page = 1,
+      limit = 10, //default limit is 10
       sort,
       category,
       maker,
@@ -103,8 +103,9 @@ class CarService {
 
     const cars = await Car.find(dbQuery)
       .populate([
-        { path: "addedBy", select: "id firstname lastname" },
-        { path: "category", select: "id name" },
+         { path: "addedBy", select: "id firstname lastname" },
+        { path: "soldTo", select: "id firstname lastname" },
+        { path: "category", select: "name" },
       ])
       .sort(sort)
       .skip(skip)
@@ -124,7 +125,8 @@ class CarService {
   async fetchCarById(carId: string): Promise<ICar> {
     const populateOptions = [
       { path: "addedBy", select: "id firstname lastname" },
-      { path: "category", select: "id name" },
+        { path: "soldTo", select: "id firstname lastname" },
+        { path: "category", select: "name" },
     ];
     const car = await Car.findById(carId).populate(populateOptions);
     if (!car) {
@@ -140,7 +142,7 @@ class CarService {
     managerId: string
   ): Promise<ICar> {
     const [car, manager] = await Promise.all([
-      Car.findById(carId).select("addedBy"),
+      Car.findById(carId).select("addedBy available"),
       User.findById(managerId).select("totalCarsAdded"),
     ]);
     if (!car || !manager) {
@@ -198,35 +200,43 @@ class CarService {
 
   /** service to buy a car by customer */
   async buyACar(carId: string, customerId: string): Promise<ICar> {
-    const [car, manager] = await Promise.all([
-      Car.findById(carId).select("addedBy available"),
+    const [car, customer] = await Promise.all([
+      Car.findById(carId).select("addedBy available soldTo"),
       User.findById(customerId).select("totalCarsAdded"),
     ]);
-    if (!car || !manager) {
-      throw new NotFoundException("Car or manager not found");
+    if (!car || !customer) {
+      throw new NotFoundException("Car or customer not found");
     }
     if (!car.available) {
-      throw new ForbiddenException("Car not available for sale");
+      throw new ForbiddenException("Car not available for sale"); //i.e car has been sold
     }
 
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      const updatedCar = await Car.findOneAndUpdate(
-        { _id: carId, available: false, soldTo: null },
-        { available: true, soldAt: new Date(), soldTo: customerId },
-        { session }
-      ).populate([{ path: "soldTo", select: "firstname lastname" }]);
+      //update car and user collections to reflect the purchase
+      await Promise.all([
+        Car.findOneAndUpdate(
+          { _id: carId, available: true, soldTo: null }, //ensure the car is available and not already sold
+          { available: false, soldAt: new Date(), soldTo: customerId },
+          { session, new: true }
+        ),
+        User.findByIdAndUpdate(
+          customerId,
+          { $inc: { totalCarsPurchased: 1 } }, //increment the total cars purchased by the customer
+          { session }
+        ),
+      ]);
+      await session.commitTransaction();
+      const updatedCar = await Car.findById(carId).populate([
+        //this was not done in the above query to avoid circular reference
+        { path: "addedBy", select: "id firstname lastname" },
+        { path: "soldTo", select: "id firstname lastname" },
+        { path: "category", select: "name" },
+      ]);
       if (!updatedCar) {
         throw new BadRequestException("Car not found or not available");
       }
-      await User.findByIdAndUpdate(
-        customerId,
-        { $inc: { totalCarsPurchased: 1 } },
-        { session }
-      );
-
-      await session.commitTransaction();
       return updatedCar;
     } catch (error) {
       await session.abortTransaction();

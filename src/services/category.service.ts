@@ -23,41 +23,6 @@ class CategoryService {
     return category;
   }
 
-  //   async getTransactions(query: Record<string, any>): Promise<any> {
-  //   const {
-  //     page = 1,
-  //     limit = 10,
-  //     name,
-  //     type,
-  //     parentCategory,
-  //     status,
-  //     startDate,
-  //     endDate,
-  //     _id,
-  //     ...otherFields
-  //   } = query;
-  //   const sort: SortOption = { createdAt: -1 };
-  //   const options = {
-  //     page: parseInt(page as string, 10),
-  //     limit: parseInt(limit as string, 10),
-  //     sort,
-  //     select: '', // remove fields from query
-  //   };
-  //   const DBquery: Record<string, any> = {
-  //     ...otherFields,
-  //     ...(name && { name }),
-  //     ...(type && { type }),
-  //     ...(parentCategory && { parent_category: parentCategory }),
-  //     ...(status && { status }),
-  //     ...(_id && { _id }),
-  //     // both will be passed by dateRangeValidator
-  //     createdAt: {
-  //       $gte: new Date(startDate as string),
-  //       $lte: new Date(endDate as string),
-  //     },
-  //   };
-  //   return await paginate(Transaction, DBquery, options);
-  // }
 
   async fetchAllCategories(
     requestQuery: Record<string, any>

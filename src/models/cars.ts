@@ -24,7 +24,8 @@ const CarSchema: Schema<ICar> = new Schema<ICar>(
     maker: {
       type: String,
       required: true,
-    }, model: {
+    },
+    model: {
       type: String,
       required: true,
     },
@@ -53,7 +54,7 @@ const CarSchema: Schema<ICar> = new Schema<ICar>(
       required: true,
       default: true,
     },
-        category: {
+    category: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "categories",
@@ -66,6 +67,7 @@ const CarSchema: Schema<ICar> = new Schema<ICar>(
 
     soldTo: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       default: null,
     },
     soldAt: {

@@ -90,7 +90,7 @@ const purchaseCarByCustomer = async (
     const car = await carService.buyACar(req.params.id, managerId);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Car fetched successfully", data: { car } });
+      .json({ message: "Car purchased successfully", data: { car } });
   } catch (error) {
     next(error);
   }
