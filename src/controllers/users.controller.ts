@@ -14,7 +14,7 @@ const getAllUsers = async (
 
     return res
       .status(StatusCodes.OK)
-      .json({ message: "Users fetched successfully", data: { users } });
+      .json({ message: "Users fetched successfully", data:  users  });
   } catch (error) {
     next(error);
   }
@@ -29,7 +29,7 @@ const getUserById = async (
     const user = await UserService.findUserById(req.params.id);
     return res
       .status(StatusCodes.OK)
-      .json({ message: "User fetched successfully", data: { user } });
+      .json({ message: "User fetched successfully", data:  user  });
   } catch (error) {
     next(error);
   }

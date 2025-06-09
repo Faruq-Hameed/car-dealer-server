@@ -27,7 +27,7 @@ const createCategory = async (
     );
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Category created successfully", data: { category } });
+      .json({ message: "Category created successfully", data: category  });
   } catch (err) {
     next(err);
   }
@@ -58,7 +58,7 @@ const getCategoryById = async (
     const category = await CategoryService.fetchCategoryById(req.params.id);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Category fetched successfully", data: { category } });
+      .json({ message: "Category fetched successfully", data: category  });
   } catch (err) {
     next(err);
   }
@@ -83,7 +83,7 @@ const updateCategory = async (
     );
     res
       .status(StatusCodes.OK)
-      .json({ message: "Category updated successfully", data: { category } });
+      .json({ message: "Category updated successfully", data: category  });
   } catch (err) {
     next(err);
   }

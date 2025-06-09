@@ -7,6 +7,7 @@ import {
   createCarValidator,
   updateCarValidator,
 } from "../utils/validators/car.validation";
+import { UserRoles } from "../utils/types/enums";
 
 const createCar = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -21,7 +22,7 @@ const createCar = async (req: Request, res: Response, next: NextFunction) => {
     );
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "New car added successfully", data: { car } });
+      .json({ message: "New car added successfully", data:  car  });
   } catch (err) {
     next(err);
   }
@@ -43,7 +44,7 @@ const getCarById = async (req: Request, res: Response, next: NextFunction) => {
     const car = await carService.fetchCarById(req.params.id);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Car fetched successfully", data: { car } });
+      .json({ message: "Car fetched successfully", data:  car  });
   } catch (err) {
     next(err);
   }
@@ -60,7 +61,7 @@ const updateCar = async (req: Request, res: Response, next: NextFunction) => {
     const car = await carService.updateCar(req.params.id, req.body, managerId);
     res
       .status(StatusCodes.OK)
-      .json({ message: "car updated successfully", data: { car } });
+      .json({ message: "car updated successfully", data:  car  });
   } catch (err) {
     next(err);
   }
@@ -90,7 +91,7 @@ const purchaseCarByCustomer = async (
     const car = await carService.buyACar(req.params.id, managerId);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Car purchased successfully", data: { car } });
+      .json({ message: "Car purchased successfully", data:  car  });
   } catch (error) {
     next(error);
   }
@@ -106,7 +107,7 @@ const getAUserCars = async (
     const userRole = res.locals.role as string;
     switch (userRole) {
       //if the user is a manager then fetch all cars added by the manager together with the queries
-      case "manager":
+      case UserRoles.MANAGER:
         const managerId = res.locals.userId as string;
         const managerCars = await carService.fetchAllCars({
           ...req.query,
@@ -114,20 +115,21 @@ const getAUserCars = async (
         });
         res.status(StatusCodes.OK).json({
           message: "Manager cars fetched successfully",
-          data: { cars: managerCars },
+          data: managerCars,
         });
         break;
-      case "customer":
+      case UserRoles.CUSTOMER:
         //if the user is a customer then fetch all cars soldTo the customer together with the queries
 
         const customerId = res.locals.userId as string;
         const customerCars = await carService.fetchAllCars({
           ...req.query,
+          available: false, //i.e all cars sold to this current user (customer)
           soldTo: customerId,
         });
         res.status(StatusCodes.OK).json({
           message: "Customer cars fetched successfully",
-          data: { cars: customerCars },
+          data: customerCars,
         });
         break;
       default:

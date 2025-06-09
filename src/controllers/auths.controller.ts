@@ -43,7 +43,6 @@ const userLogin = async (
 ): Promise<any> => {
   try {
     const { value, error } = loginValidator(req.body);
-    console.log({body: req.body, value, error})
     if (error) {
       throw new BadRequestException(error.details[0].message);
     }

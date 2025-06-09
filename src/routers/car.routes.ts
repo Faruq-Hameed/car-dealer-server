@@ -8,11 +8,12 @@ export const carRouter = Router();
 carRouter.use(validateObjectId)
 
 carRouter.get("/", carController.getAllCars);
+carRouter.get("/me", [Authenticator(), carController.getAUserCars]);  //get my cars
+
 carRouter.get("/:id", carController.getCarById);
 
 carRouter.put("/buy/:id", [Authenticator(UserRoles.CUSTOMER), carController.purchaseCarByCustomer]);
 
-carRouter.get("/me", [Authenticator(), carController.getAUserCars]);  //get my cars
 
 carRouter.use(Authenticator(UserRoles.MANAGER))
 carRouter.post("/", carController.createCar);

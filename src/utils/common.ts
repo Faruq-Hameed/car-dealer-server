@@ -26,7 +26,6 @@ export async function paginate<T extends Document>(
   query: Record<string, any> = {},
   options: PaginateOptions = {}
 ): Promise<PaginationResponse<T>> {
-  console.log("paginate", query, options);
   const {
     page = 1,
     limit = 10,

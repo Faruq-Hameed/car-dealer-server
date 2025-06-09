@@ -31,7 +31,6 @@ export const verifyAuthToken = (
   token: string,
 ): IJwtPayload => {
   const decoded = jwt.verify(token, appConfig.jwt.secret);
-  console.log({decoded})
   if (!decoded) throw new TokenException();
   return decoded as IJwtPayload;
 };

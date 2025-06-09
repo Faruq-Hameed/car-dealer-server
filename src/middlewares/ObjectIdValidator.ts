@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import { BadRequestException } from "../exceptions";
 
 const validateObjectId = (req: Request, _res: Response, next: NextFunction) => {
-  console.log("req.params:", req.params);
   const id = req.params.id;
   if (!id) {
     return next();

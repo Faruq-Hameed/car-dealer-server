@@ -7,8 +7,6 @@ const ErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const errMsg: string =
     typeof err.message === 'string' ? err.message : 'Something went wrong';
 
-  console.error(err);
-
   res.status(errStatus).json({
     message: errStatus === 500 ? 'Internal Server Error' : errMsg,
     data: {},

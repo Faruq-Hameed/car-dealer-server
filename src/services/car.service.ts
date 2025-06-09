@@ -29,7 +29,6 @@ class CarService {
 
     // start a transaction the process has to be ACID compliant
     const session = await mongoose.startSession();
-    console.log({ ...data, addedBy: managerId });
     session.startTransaction();
     try {
       //Should have ran the opration below parrallell but the mongoose session fails if done that way
@@ -71,7 +70,6 @@ class CarService {
       category,
       maker,
       model,
-      available = true,
       startPrice,
       endPrice,
       startDate,
@@ -82,7 +80,8 @@ class CarService {
     const dateRange = dateRangeValidator({ startDate, endDate }); //normalized the date range
 
     const dbQuery = {
-      available,
+      ...others, /// allows for flexible filtering on extra fields
+
       // Match 'maker' using case-insensitive partial match
       ...(maker && { maker: { $regex: maker, $options: "i" } }),
 
@@ -100,10 +99,9 @@ class CarService {
         : {}),
       updatedAt: { $gte: dateRange.startDate, $lte: dateRange.endDate }, //this can also when purchased too
     };
-
     const cars = await Car.find(dbQuery)
       .populate([
-         { path: "addedBy", select: "id firstname lastname" },
+        { path: "addedBy", select: "id firstname lastname" },
         { path: "soldTo", select: "id firstname lastname" },
         { path: "category", select: "name" },
       ])
@@ -125,8 +123,8 @@ class CarService {
   async fetchCarById(carId: string): Promise<ICar> {
     const populateOptions = [
       { path: "addedBy", select: "id firstname lastname" },
-        { path: "soldTo", select: "id firstname lastname" },
-        { path: "category", select: "name" },
+      { path: "soldTo", select: "id firstname lastname" },
+      { path: "category", select: "name" },
     ];
     const car = await Car.findById(carId).populate(populateOptions);
     if (!car) {
